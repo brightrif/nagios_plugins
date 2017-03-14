@@ -12,7 +12,7 @@
 #			  
 #			  This script has been designed and written on Linux plateform. 
 #						
-# Usage                 : ./f5_statistics.sh -H <host name> -C <snmp comunity> -v <vitual server name> -w <warning thrushold> -c <critical thrushold>
+# Usage                 : ./check_f5_connections.sh -H <host name> -C <snmp comunity> -v <vitual server name> -w <warning thrushold> -c <critical thrushold>
 #		
 #
 # -----------------------------------------------------------------------------------------
@@ -71,8 +71,8 @@ function_help() {
 # -----------------------------------------------------------------------------------------
 snmp_comunity="public"
 check="virtual_server"
-warning="3000"
-critical="3750"
+warning="500"
+critical="750"
 
 # -------------------------------------------------------------------------------------
 # Grab the command line arguments
@@ -144,29 +144,27 @@ idx=$((idx+1))
 done
 bar=$(IFS=. ; echo "${vsdec[*]}")
 oid=$base"."$connectiontype"."$vslength"."$bar
-#echo $host
-#echo $snmp_comunity
-#echo $oid 
-#echo $vsfullname
-#oput=`/usr/bin/snmpget -v 2c -c $snmp_comunity $host $oid | awk ' {print $4} '`
-oput=759
+#SNMP
+oput=`/usr/bin/snmpget -v 2c -c $snmp_comunity $host $oid | awk ' {print $4} '`
+#check whether it return the right vaule 
 if [ "$?" != "0" ]; then
 		echo "UNKNOWN: snmpget returned an error"
 		exit 3
 fi
-echo $warning
+
+#main fuction to check the connections with warning and critical vaule 
 main () {
-#[ $oput -eq 0 ] && 
+
 if [ $oput -lt $warning ]; then 
-	echo "Ok | $oput"
+	echo "Status OK. $oput active connections | 'connections'=$oput%;$warning;$critical"
 	exit $state_ok
 elif
 	[ $oput -ge $warning ] && [ $oput -lt $critical ]; then
-	echo "Warning | $oput"
+	echo "Status Warning. $oput active connections | 'connections'=$oput%;$warning;$critical"
 	exit $state_warning
 elif
 	[ $oput -ge $critical ]; then
-	echo "Critical | $oput"
+	echo "Status Critical. $oput active connections | 'connections'=$oput%;$warning;$critical"
 	exit $state_critical
 
 else
