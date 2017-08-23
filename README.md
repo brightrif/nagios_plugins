@@ -2,7 +2,7 @@
 This script will check the virtual servers and return the status with perf data. 
 
 Usage:
-./check_f5_usage.sh -H <host name> -C <snmp comunity> -v <virtual server name> -w <warning threshold> -c <critical threshold>
+./check_f5_connection.sh -H <host name> -C <snmp comunity> -v <virtual server name> -w <warning threshold> -c <critical threshold>
 
 Host name and virtual server name are the mandatory field 
 
